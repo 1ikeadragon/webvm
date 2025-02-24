@@ -20,6 +20,7 @@ RUN apt-get update && apt-get -y upgrade && \
 # Create user and set password
 RUN useradd -m bal && \
     echo "bal:bal" | chpasswd && \
+    groupadd docker && \
     usermod -aG docker bal && \
     echo 'root:root' | chpasswd
 
