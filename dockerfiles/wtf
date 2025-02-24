@@ -1,28 +1,25 @@
 FROM --platform=i386 i386/debian:buster
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Update and install prerequisites for Docker
+# Install prerequisites
 RUN apt-get update && apt-get -y upgrade && \
     apt-get install -y \
-    apt-transport-https \
     ca-certificates \
     curl \
-    gnupg \
-    lsb-release
+    iptables \
+    kmod
 
-# Add Docker's official GPG key and repository
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-RUN echo "deb [arch=i386] https://download.docker.com/linux/debian buster stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+# Download and install Docker binary
+RUN curl -fsSL https://download.docker.com/linux/static/stable/i386/docker-20.10.9.tgz -o docker.tgz && \
+    tar xzvf docker.tgz && \
+    mv docker/* /usr/bin/ && \
+    rm -rf docker docker.tgz
 
-# Install Docker
-RUN apt-get update && apt-get install -y \
-    docker-ce \
-    docker-ce-cli \
-    containerd.io
+# Set up Docker daemon directory
+RUN mkdir -p /var/lib/docker
 
 # Create user and set password
 RUN useradd -m user && echo "user:password" | chpasswd
-# Add user to docker group
 RUN usermod -aG docker user
 RUN echo 'root:password' | chpasswd
 
