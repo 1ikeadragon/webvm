@@ -10,7 +10,7 @@ RUN apt-get update && apt-get -y upgrade && \
     kmod
 
 # Download and install Docker binary
-RUN curl -fsSL https://get.docker.com/ | sh
+RUN curl -fsSL https://get.docker.com | sh
 
 
 # Create user and set password
