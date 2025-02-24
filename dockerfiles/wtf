@@ -10,17 +10,12 @@ RUN apt-get update && apt-get -y upgrade && \
     kmod
 
 # Download and install Docker binary
-RUN curl -fsSL https://download.docker.com/linux/static/stable/i386/docker-20.10.9.tgz -o docker.tgz && \
-    tar xzvf docker.tgz && \
-    mv docker/* /usr/bin/ && \
-    rm -rf docker docker.tgz
+RUN curl -fsSL https://get.docker.com/ | sh
 
-# Set up Docker daemon directory
-RUN mkdir -p /var/lib/docker
 
 # Create user and set password
-RUN useradd -m user && echo "user:password" | chpasswd
-RUN usermod -aG docker user
-RUN echo 'root:password' | chpasswd
+RUN useradd -m user && echo "bal:bal" | chpasswd
+RUN usermod -aG docker bal
+RUN echo 'root:root' | chpasswd
 
 CMD [ "/bin/bash" ]
