@@ -1,21 +1,28 @@
 FROM --platform=i386 i386/debian:buster
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install prerequisites
+# Install prerequisites and setup Docker repository
 RUN apt-get update && apt-get -y upgrade && \
     apt-get install -y \
     ca-certificates \
     curl \
     iptables \
-    kmod
+    kmod && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update
 
-# Download and install Docker binary
+# Install Docker
 RUN curl -fsSL https://get.docker.com | sh
 
-
 # Create user and set password
-RUN useradd -m user && echo "bal:bal" | chpasswd
-RUN usermod -aG docker bal
-RUN echo 'root:root' | chpasswd
+RUN useradd -m bal && \
+    echo "bal:bal" | chpasswd && \
+    usermod -aG docker bal && \
+    echo 'root:root' | chpasswd
 
-CMD [ "/bin/bash" ]
+CMD ["/bin/bash"]
